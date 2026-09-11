@@ -1,0 +1,19 @@
+﻿Jacob's Paint Version 0.1.0 - 09/10/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
+
+New features:
+  * Open and display image files (jpg, png, gif, tif)
+  * File menu bar with Open, Save, Save As, and Exit in that order
+  * Image displayed in a scrollable panel, so images larger
+    than the window can be viewed in full
+
+Known issues:
+  * Save and Save As menu items are present but only as blank stubs
+
+Expected next sprint:
+  * Implement Save and Save As
+  * Freehand drawing with mouse
+  * Color selection
+  * Undo
