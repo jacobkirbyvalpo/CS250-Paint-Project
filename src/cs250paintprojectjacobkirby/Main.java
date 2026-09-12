@@ -1,21 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cs250paintprojectjacobkirby;
-import javax.swing.SwingUtilities;
-/**
- *
- * @author Norboc
- */
-public class Main {
-    //jvm calls this first, gonna be honest idk how it works just know I need it
-    public static void main(String[] args){
-        //we send this to EDT, to keep code thread safe no race conditions wanted.
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new PaintApp();
-            }
-        });
-    }  
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+//JavaFX must extend Application. launch() starts the JavaFX
+//runtime, which then calls start() on its own thread
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) {
+        //hand the primary window to PaintApp to fill in
+        new PaintApp(stage);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

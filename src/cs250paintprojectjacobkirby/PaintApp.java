@@ -1,121 +1,145 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cs250paintprojectjacobkirby;
 
-/**
- *
- * @author Norboc
- */
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
+public class PaintApp {
 
-public class PaintApp implements ActionListener {
-    //window everything sits in
-    private JFrame frame;
-    // components holds and draws image
-    private ImagePanel panel;
-    //file image comes from
+    //the window handed in by Main JavaFX
+    private Stage stage;
+
+    //holds and draws the image
+    private ImageCanvas canvas;
+
+    //file the image came from. null means nothing opened or saved yet
     private File currentFile;
-    //menu items for actione performed
-    private JMenuItem openItem; 
-    private JMenuItem saveItem;
-    private JMenuItem saveAsItem;
-    private JMenuItem exitItem;
-// constructor, holds the GUI
-    public PaintApp() {
-               frame = new JFrame("Paint");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        panel = new ImagePanel();
-        frame.add(new JScrollPane(panel));
+    public PaintApp(Stage stage) {
+        this.stage = stage;
+        stage.setTitle("Paint");
 
-        // menu items
-        openItem = new JMenuItem("Open");
-        saveItem = new JMenuItem("Save");
-        saveAsItem = new JMenuItem("Save As");
-        exitItem = new JMenuItem("Exit");
-        //this used since class implements action listener, they all call the same
-        //action performed method
-        openItem.addActionListener(this);
-        saveItem.addActionListener(this);
-        saveAsItem.addActionListener(this);
-        exitItem.addActionListener(this);
+        canvas = new ImageCanvas();
 
-        // File menu holds the items (drop down)
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.add(openItem);
-        fileMenu.add(saveItem);
-        fileMenu.add(saveAsItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitItem);
+        // scrollbars when the image is bigger than the window
+        ScrollPane scrollPane = new ScrollPane(canvas);
 
-        // menu bar holds the menus
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(fileMenu);
-        frame.setJMenuBar(menuBar);
+        //menu items
+        MenuItem openItem = new MenuItem("Open");
+        MenuItem closeItem = new MenuItem("Close");
+        MenuItem saveItem = new MenuItem("Save");
+        MenuItem saveAsItem = new MenuItem("Save As");
+        MenuItem exitItem = new MenuItem("Exit");
+        // these set the actions
+         openItem.setOnAction(e -> openFile());
+         saveItem.setOnAction(e -> save());
+         saveAsItem.setOnAction(e -> saveAs());
+         closeItem.setOnAction(e -> closeImage());
+         exitItem.setOnAction(e -> javafx.application.Platform.exit());
 
-        frame.setSize(800, 600);
-        frame.setVisible(true);
-       }  
-        public void actionPerformed(ActionEvent event) {
-            //returns the object the user clicked
-        Object src = event.getSource();
+        Menu fileMenu = new Menu("File");
+        fileMenu.getItems().addAll(openItem, saveItem, saveAsItem, closeItem,
+                new SeparatorMenuItem(), exitItem);
+        //creates the menu bar and pulls from the menus to populat it
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(fileMenu);
 
-        if (src == openItem) {
-            openFile();
-        } else if (src == saveItem) {
-            save();
-        } else if (src == saveAsItem) {
-            saveAs();
-        } else if (src == exitItem) {
-            System.exit(0);
-        }
+        BorderPane root = new BorderPane();
+        root.setTop(menuBar);
+        root.setCenter(scrollPane);
+
+        stage.setScene(new Scene(root, 800, 600));
+        stage.show();
     }
-// shows file dialog and reads chosen image
+       //does what it says, opens tje file and prevents other files
     private void openFile() {
-        //limits files
-         JFileChooser chooser = new JFileChooser();
-    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-        "Images", "jpg", "gif", "png", "tif");
-    chooser.setFileFilter(filter);
-//centers dialog on window, blocks until user picks
-// a file or cancels dialog
-    int returnVal = chooser.showOpenDialog(frame);
-    // chose a file
-    if (returnVal == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        try {
-            //related to buffered image in LoadImage, turns into pixels in mem
-            BufferedImage img = ImageIO.read(file);
-            //incase user selects a file anyway not supported
-            if (img == null) {
-                JOptionPane.showMessageDialog(frame, "Not a supported image format.");
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open Image");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("Images",
+                "*.jpg", "*.gif", "*.png", "*.tif"));
+        //opens file dialog
+        File file = chooser.showOpenDialog(stage);
+
+        //FileChooser returns null if the user cancelled the dialog
+        if (file != null) {
+            //JavaFX loads images fromstring not a File
+            Image img = new Image(file.toURI().toString());
+
+            if (img.isError()) {
+                showError("Not a supported image format.");
                 return;
             }
-            //hands to panel and sizes to image, and repaints it
-            panel.setImage(img);
+
+            canvas.setImage(img);
             currentFile = file;
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, "Could not read the file.");
         }
-    }
     }
 
     private void save() {
+        if (currentFile == null) {
+            saveAs();
+            return;
+        }
+        writeTo(currentFile);
     }
-// not implemented yet will before due
+
     private void saveAs() {
-        // not implemented yet will before due
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save Image");
+        chooser.getExtensionFilters().add(
+            new FileChooser.ExtensionFilter("PNG", "*.png"));
+
+        File file = chooser.showSaveDialog(stage);
+        if (file != null) {
+            writeTo(file);
+            currentFile = file;
+        }
+    }
+
+    // clears the image without exiting the program
+    private void closeImage() {
+        canvas.setImage(null);
+        currentFile = null;
+        //sets to 0 to close the image
+        canvas.setWidth(0);
+        canvas.setHeight(0);
+    }
+
+    //hared by save and saveAs only difference between the two
+    //is where the file came from
+    private void writeTo(File file) {
+        if (canvas.getImage() == null) {
+            showError("Nothing to save.");
+            return;
+        }
+        try {
+            //BufferedImage that ImageIO can write.
+            boolean ok = ImageIO.write(
+                SwingFXUtils.fromFXImage(canvas.getImage(), null),
+                "png", file);
+
+            if (!ok) {
+                showError("No writer available for that file format.");
+            }
+        } catch (IOException e) {
+            showError("Could not write to the file.");
+        }
+    }
+
+    private void showError(String message) {
+        new Alert(Alert.AlertType.ERROR, message).showAndWait();
     }
 }
-
