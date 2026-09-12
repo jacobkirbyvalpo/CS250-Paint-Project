@@ -1,4 +1,26 @@
-﻿Jacob's Paint Version 0.1.0 - 09/10/2026
+﻿Jacob's Paint Version 0.2.0 - 09/11/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
+
+New features:
+  * Open and display image files (jpg, png, gif, tif)
+  * File menu bar with Open, Save, Save As, close and Exist
+  * Image displayed in a scrollable panel, so images larger
+    than the window can be viewed in full
+  *Everything converted to JavaFX from Swing
+
+Known issues:
+  * Some images for whatever reason do not scale properly
+
+Expected next sprint:
+* The ability to draw a line and save the image
+* The ability to manae an image larger than the window (already partially working)
+* Control the width of the line drawn
+* have a color chooser
+* Have a help menu with help and about options, about should be a seperate window/dialog
+
+Jacob's Paint Version 0.1.0 - 09/10/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
