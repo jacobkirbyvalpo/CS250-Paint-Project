@@ -1,4 +1,24 @@
-﻿Jacob's Paint Version 0.2.0 - 09/11/2026
+﻿Jacob's Paint Version 0.3.0 - 09/18/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
+
+New Features:
+* Draw lines on the canvas
+* Save changes made to the image (lines and any color the line may be)
+* Slider in toolbar to set line width 1 to 20
+* Save and Save As now support PNG, JPG, JPEG, and BMP
+* Smart save warns when closing or exiting when unsaved changes exist.
+* Under File, you can resize the canvas
+* Help menu and Help and About
+
+Known Issues:
+* Nothing is drawn until an image exists.
+* lines only appear when the mouse is released
+
+ 
+
+Jacob's Paint Version 0.2.0 - 09/11/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
