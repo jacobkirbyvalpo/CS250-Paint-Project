@@ -1,4 +1,43 @@
-﻿Jacob's Paint Version 0.3.0 - 09/18/2026
+﻿Jacob's Paint Version 0.4.0 - 09/25/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.4.0
+
+New Features:
+* Keyboard shortcuts: Ctrl+O open, Ctrl+S save, Ctrl+Shift+S save as, Ctrl+W close, Ctrl+Q exit
+* Width slider now shows the current size in pixels.
+* Tool buttons in the toolbar to switch between tools
+* Pencil tool for freehand drawing
+* Shape tools: rectangle, square, ellipse, circle, and triangle
+* Shapes show a live preview while dragging and work in any drag direction
+* Line width applies to shape outlines
+* Dashed checkbox for dashed lines and shape outlines, dashes scale with line width
+* Color label next to the color picker shows the name, hex code, and RGB value
+* Color grabber tool, click the image to pick up that color for drawing
+* Tabs, each opened image gets its own tab.
+* Save, Save As, Close, and Resize work on whichever tab is selected
+* Smart save checks each tab on close and every tab on exit (works with keybinds too).
+* Refactored extensively
+* JavaDoc comments
+
+Known Issues:
+* Nothing is drawn until an image is opened
+* Line tool has no preview while dragging, it only appears on release
+* Color names only match a small list, so some names are off (peach shows as Pink)
+* Grabbing an empty spot gives black
+
+Expected next sprint:
+* Undo and redo using a stack
+* Blank starting image so you can draw without opening a file
+* Clear canvas tool with an "are you sure" check
+* Another new shape
+* Regular polygon with any number of sides
+* Right and non-right angle triangles
+* Select and copy/paste a piece of the image with live draw
+* Select and move a piece of the image
+* Add text typed in by the user
+
+Jacob's Paint Version 0.3.0 - 09/18/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.1.0
