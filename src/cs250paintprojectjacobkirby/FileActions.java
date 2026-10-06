@@ -86,7 +86,31 @@ public class FileActions {
             tabPane.getSelectionModel().select(tab);
         }
     }
+    
+    /**
+     * Opens a new tab with a blank white image canvas.
+     */
+    public void newFile() {
+        DocumentTab tab = new DocumentTab(settings, null, null);
+        tab.getCanvas().makeBlank(800, 600);
+        addTab(tab);
+    }
 
+    /**
+     *adds a tab to the window and selects it, unsaved check if tab closed
+     *
+     * @param tab the tab to add
+     */
+    private void addTab(DocumentTab tab) {
+        tab.setOnCloseRequest(e -> {
+            tabPane.getSelectionModel().select(tab);
+            if (!confirmDiscard()) {
+                e.consume();
+            }
+        });
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+    }
     /**
      * Saves the current tab to its file. A fall back to save as if needed.
      */
@@ -102,7 +126,6 @@ public class FileActions {
         }
         writeTo(tab.getFile());
     }
-//all the file extensions supported
     /**
      * Asks for a file name and format, saves the current tab there, and
      * remembers that file for later saves.

@@ -13,5 +13,12 @@ public enum Tool {
     ELLIPSE,
     CIRCLE,
     TRIANGLE,
+    DIAMOND,
+    RIGHT_TRIANGLE,
+    POLYGON,
+    TEXT,
+    SELECT,
+    PASTE,
+    MOVE,
     GRABBER
 }

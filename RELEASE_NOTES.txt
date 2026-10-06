@@ -1,4 +1,52 @@
-﻿Jacob's Paint Version 0.4.0 - 09/25/2026
+﻿Jacob's Paint Version 0.5.0 - 10/05/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.5.0
+
+New Features:
+* The program now starts with a blank white canvas.
+* File > New (Ctrl+N) opens another blank canvas in a new tab
+* Undo (Ctrl+Z) and Redo (Ctrl+Y) under the new Edit menu, built on two stacks, each tab has its own
+* Clear Canvas under Edit, with an "are you sure" check
+* Resizing the canvas can be undone
+* Line tool shows a live preview while dragging
+* Right triangle tool
+* Regular polygon tool, with a Sides box in the toolbar to pick the number of sides (3 to 100)
+* Diamond tool
+* Text tool, click the image and type the text to add, uses the current color, the width slider sets the size
+* Select tool, drag to mark an area with a dashed box that is not saved into the image
+* Copy (Ctrl+C) copies the selected area, works between tabs
+* Paste tool, the copied piece follows the mouse while dragging and stays on release
+* Move tool, the selected piece is lifted out and follows the mouse while dragging
+* All new shapes, paste, and move show a live preview and can be undone
+* New tabs that have never been saved are named Untitled
+
+Known Issues:
+* Grabber only picks up a color while dragging, a single click does nothing
+* Dragging the grabber off the edge of the canvas causes an error
+* In the unsaved changes dialog, clicking Save and then cancelling the Save As window still closes the tab
+* Clicking a tool button that is already selected unselects it, but the tool stays active
+* Text has no preview before it is placed
+* Paste is a toolbar tool, there is no Ctrl+V
+* Pencil looks mostly solid when Dashed is on
+* The toolbar is wider than the window, extra buttons are behind the arrow at the right end
+* Color names only match a small list, so some names are off (peach shows as Pink)
+
+Expected next sprint:
+* At least 3 unit tests
+* Autosave on a timer
+* Option to show or hide the autosave countdown, and reset the timer when the user saves
+* Built in web server that shows one or more of the open images, chosen by the user, with a message when none are chosen
+* Save an image in a different file format than the one it was opened in
+* Warning that features or data can be lost when saving to a different format
+* A test plan or demonstration that shows the format conversion and its data loss
+* Fix the grabber, save dialog, and tool button issues above
+
+
+
+
+
+Jacob's Paint Version 0.4.0 - 09/25/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.4.0

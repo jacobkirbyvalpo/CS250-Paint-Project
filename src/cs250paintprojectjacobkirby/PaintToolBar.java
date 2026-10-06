@@ -8,6 +8,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Spinner;
 /**
  *holds the color picker and color readout, and the grabber, line width slide and dashed toggles
  *
@@ -58,6 +59,42 @@ public class PaintToolBar extends ToolBar {
         ToggleButton grabberButton = new ToggleButton("Grabber");
         grabberButton.setToggleGroup(toolGroup);
         grabberButton.setOnAction(e -> settings.setTool(Tool.GRABBER));
+        //adds diamond shape
+        ToggleButton diamondButton = new ToggleButton("Diamond");
+        diamondButton.setToggleGroup(toolGroup);
+        diamondButton.setOnAction(e -> settings.setTool(Tool.DIAMOND));
+        
+        ToggleButton rightTriangleButton = new ToggleButton("Right Triangle");
+        rightTriangleButton.setToggleGroup(toolGroup);
+        rightTriangleButton.setOnAction(e -> settings.setTool(Tool.RIGHT_TRIANGLE));
+
+        ToggleButton polygonButton = new ToggleButton("Polygon");
+        polygonButton.setToggleGroup(toolGroup);
+        polygonButton.setOnAction(e -> settings.setTool(Tool.POLYGON));
+        
+        ToggleButton textButton = new ToggleButton("Text");
+        textButton.setToggleGroup(toolGroup);
+        textButton.setOnAction(e -> settings.setTool(Tool.TEXT));
+        
+        ToggleButton selectButton = new ToggleButton("Select");
+        selectButton.setToggleGroup(toolGroup);
+        selectButton.setOnAction(e -> settings.setTool(Tool.SELECT));
+        
+        ToggleButton pasteButton = new ToggleButton("Paste");
+        pasteButton.setToggleGroup(toolGroup);
+        pasteButton.setOnAction(e -> settings.setTool(Tool.PASTE));
+        
+        ToggleButton moveButton = new ToggleButton("Move");
+        moveButton.setToggleGroup(toolGroup);
+        moveButton.setOnAction(e -> settings.setTool(Tool.MOVE));
+
+        Label sidesLabel = new Label("Sides");
+        Spinner<Integer> sidesSpinner = new Spinner<>(3, 100, 5);
+        sidesSpinner.setPrefWidth(70);
+        sidesSpinner.setEditable(true);
+        sidesSpinner.valueProperty().addListener((obs, oldVal, newVal) -> {
+            settings.setSides(newVal);
+        });
 
         //control color picker and displays RGB and color name
         ColorPicker colorPicker = new ColorPicker(Color.BLACK);
@@ -86,9 +123,8 @@ public class PaintToolBar extends ToolBar {
         CheckBox dashedBox = new CheckBox("Dashed");
         dashedBox.setOnAction(e -> settings.setDashed(dashedBox.isSelected()));
 
-        getItems().addAll(colorPicker, colorLabel, grabberButton, widthSlider, widthLabel,
-                pencilButton, lineButton, rectButton,
-                squareButton, ellipseButton, circleButton, triangleButton, dashedBox
-        );
+        getItems().addAll(colorPicker, colorLabel, grabberButton, widthSlider, widthLabel, textButton, selectButton, pasteButton, moveButton,
+        pencilButton, lineButton, rectButton, squareButton, ellipseButton, circleButton, triangleButton,
+        rightTriangleButton, polygonButton, sidesLabel, sidesSpinner, diamondButton, dashedBox);
     }
 }

@@ -36,9 +36,10 @@ public class PaintApp {
 
         ToolSettings settings = new ToolSettings();
         tabPane = new TabPane();
-        fileActions = new FileActions(stage, tabPane, settings);
-
-        AppMenuBar menuBar = new AppMenuBar(fileActions, () -> resizeCanvas());
+                fileActions = new FileActions(stage, tabPane, settings);
+        fileActions.newFile();
+        EditActions editActions = new EditActions(fileActions);
+        AppMenuBar menuBar = new AppMenuBar(fileActions, editActions, () -> resizeCanvas());
 
         PaintToolBar toolBar = new PaintToolBar(settings);
 
