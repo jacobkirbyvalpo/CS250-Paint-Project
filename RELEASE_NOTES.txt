@@ -1,4 +1,49 @@
-﻿Jacob's Paint Version 0.5.0 - 10/05/2026
+﻿Jacob's Paint Version 0.6.0 - 10/14/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.6.0
+
+New Features:
+* Star tool, uses the Sides box for the number of points, 4 points minimum
+* Autosave timer, every 60 seconds a backup copy of every tab with unsaved changes is saved as a png in the JacobsPaintAutosave folder in the home folder, the real files are never overwritten
+* Autosave countdown shown in a new status bar at the bottom of the window
+* Options > Show Autosave Timer turns the countdown display on or off
+* Saving resets the autosave countdown
+* Built in web server at http://localhost:8080 that shows the images the user picks
+* Right click a tab and check Share on Web to show it on the web page, the page refreshes every 5 seconds
+* The web page shows a message when no images are shared
+* Saving as JPG or JPEG from a lossless format now shows a warning that image detail will be lost, Cancel stops the save
+* 4 unit tests (JUnit 4) for the file format code, including a test that proves JPG loses pixel data and PNG does not
+* Fixed saving a new Untitled canvas, it used to fail with "Nothing to save"
+* Undo/redo and the select, copy, paste and move code were moved out of ImageCanvas into their own classes
+
+Known Issues:
+* Grabber only picks up a color while dragging, a single click does nothing
+* Dragging the grabber off the edge of the canvas causes an error
+* In the unsaved changes dialog, clicking Save and then cancelling the Save As window still closes the tab
+* Clicking a tool button that is already selected unselects it, but the tool stays active
+* Text has no preview before it is placed
+* Paste is a toolbar tool, there is no Ctrl+V
+* Pencil looks mostly solid when Dashed is on
+* The toolbar is wider than the window, extra buttons are behind the arrow at the right end
+* Color names only match a small list, so some names are off (peach shows as Pink)
+* Transparency is not kept, transparent areas of an opened image turn white
+* The autosave interval can only be changed in the code
+* The web server always uses port 8080 and does not start if another program is using it (used this since 8000 is a default for a lot of stuff so did not want to risk it)
+
+Expected next sprint:
+* Rotate the whole canvas or a selection by 90, 180 or 270 degrees
+* Mirror the whole canvas or a selection horizontally and vertically
+* Icons for the drawing tools and other buttons
+* Tool tips on buttons that show on hover
+* OS notifications in the corner of the screen when autosave runs, with an option to turn them on or off
+* More keyboard shortcuts, including Ctrl+V for paste
+* Threaded logging that adds one line per user action to a log file, with the date, file name, time and what happened (tools picked, menu actions, saves, autosaves, opened files)
+
+
+
+
+Jacob's Paint Version 0.5.0 - 10/05/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.5.0

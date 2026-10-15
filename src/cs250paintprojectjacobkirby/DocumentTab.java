@@ -1,6 +1,8 @@
 package cs250paintprojectjacobkirby;
 
 import java.io.File;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
@@ -20,6 +22,8 @@ public class DocumentTab extends Tab {
 
     //file the image came from. null means nothing opened or saved yet
     private File currentFile;
+
+    private boolean shared;
      /**
      * Creates a tab with its own canvas.
      *
@@ -38,6 +42,19 @@ public class DocumentTab extends Tab {
             }
         // scrollbars when the image is bigger than the window
         setContent(new ScrollPane(new Group(canvas, canvas.getSelectionBox())));
+
+        CheckMenuItem shareItem = new CheckMenuItem("Share on Web");
+        shareItem.setOnAction(e -> shared = shareItem.isSelected());
+        setContextMenu(new ContextMenu(shareItem));
+    }
+
+    /**
+     * Checks if the user picked this tab to show on the web server.
+     *
+     * @return true if the tab is shared
+     */
+    public boolean isShared() {
+        return shared;
     }
 
     public ImageCanvas getCanvas() {

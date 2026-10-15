@@ -5,12 +5,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import java.util.Stack;
 import java.util.Optional;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 //canvas only thing you can draw on, useful for later
 /**
  * Canvas is the drawing surface, displayed the loaded image and has
@@ -36,15 +34,9 @@ public class ImageCanvas extends Canvas {
     private double startX;
     private double startY;
     
-    private Stack<WritableImage> undoStack = new Stack<>();
-    private Stack<WritableImage> redoStack = new Stack<>();
-    private Rectangle selectionBox = new Rectangle();
-    
-    private WritableImage movingPiece;
-    private WritableImage moveBase;
-    private double moveOffsetX;
-    private double moveOffsetY;
-    
+    private UndoHistory history = new UndoHistory();
+    private SelectionTool selection;
+
     
     /**
      *creates the canvas and sets up mouse handling
@@ -54,13 +46,7 @@ public class ImageCanvas extends Canvas {
     public ImageCanvas(ToolSettings settings) {
         this.settings = settings;
         gc = getGraphicsContext2D();
-        
-        selectionBox.setFill(null);
-        selectionBox.setStroke(Color.BLUE);
-        selectionBox.setStrokeType(StrokeType.INSIDE);
-        selectionBox.getStrokeDashArray().addAll(6.0, 6.0);
-        selectionBox.setMouseTransparent(true);
-        selectionBox.setVisible(false);
+        selection = new SelectionTool(this, settings);
 
             setOnMousePressed(e -> {
             gc.setStroke(settings.getColor());
@@ -79,18 +65,18 @@ public class ImageCanvas extends Canvas {
             startY = e.getY();
             
                 if (settings.getTool() == Tool.SELECT) {
-                selectionBox.setVisible(false);
+                selection.getSelectionBox().setVisible(false);
             }
-                
+
                 if (settings.getTool() == Tool.MOVE) {
-                startMove(e.getX(), e.getY());
+                selection.startMove(beforeDrag, e.getX(), e.getY());
             }
             
         });
 
             setOnMouseDragged(e -> {
             if (settings.getTool() == Tool.SELECT) {
-                updateSelection(e.getX(), e.getY());
+                selection.updateSelection(startX, startY, e.getX(), e.getY());
                 return;
              }
             if (settings.getTool() == Tool.TEXT) {
@@ -98,12 +84,12 @@ public class ImageCanvas extends Canvas {
              }
             
             if (settings.getTool() == Tool.PASTE) {
-                drawPaste(e.getX(), e.getY());
+                selection.drawPaste(beforeDrag, e.getX(), e.getY());
                 return;
             }
-            
+
             if (settings.getTool() == Tool.MOVE) {
-                dragMove(e.getX(), e.getY());
+                selection.dragMove(e.getX(), e.getY());
                 return;
             }
             if (settings.getTool() == Tool.PENCIL) {
@@ -137,18 +123,18 @@ public class ImageCanvas extends Canvas {
             if (settings.getTool() == Tool.PASTE) {
                 if (settings.getClipboard() != null) {
                     saveForUndo(beforeDrag);
-                    drawPaste(e.getX(), e.getY());
+                    selection.drawPaste(beforeDrag, e.getX(), e.getY());
                     modified = true;
                 }
                 return;
             }
             
             if (settings.getTool() == Tool.MOVE) {
-                if (movingPiece != null) {
+                if (selection.isMoving()) {
                     saveForUndo(beforeDrag);
-                    dragMove(e.getX(), e.getY());
+                    selection.dragMove(e.getX(), e.getY());
                     modified = true;
-                    movingPiece = null;
+                    selection.stopMove();
                 }
                 return;
             }
@@ -204,8 +190,7 @@ public class ImageCanvas extends Canvas {
         setHeight(height);
         clear();
         //for undo
-        undoStack.clear();
-        redoStack.clear();
+        history.clear();
         //blank pages have nothing to save
         modified = false;
     }
@@ -214,11 +199,10 @@ public class ImageCanvas extends Canvas {
      * sets the canvas back to the way it was before the previous change.
      */
     public void undo() {
-        if (undoStack.isEmpty()) {
+        if (!history.canUndo()) {
             return;
         }
-        redoStack.push(snapshot(null, null));
-        restore(undoStack.pop());
+        restore(history.undo(snapshot(null, null)));
         modified = true;
     }
 
@@ -226,11 +210,10 @@ public class ImageCanvas extends Canvas {
      * Brings back the last change that was undone.
      */
     public void redo() {
-        if (redoStack.isEmpty()) {
+        if (!history.canRedo()) {
             return;
         }
-        undoStack.push(snapshot(null, null));
-        restore(redoStack.pop());
+        restore(history.redo(snapshot(null, null)));
         modified = true;
     }
 
@@ -243,12 +226,11 @@ public class ImageCanvas extends Canvas {
         setWidth(image.getWidth());
         setHeight(image.getHeight());
         gc.drawImage(image, 0, 0);
-        selectionBox.setVisible(false);
+        selection.getSelectionBox().setVisible(false);
     }
     
     private void saveForUndo(WritableImage before) {
-        undoStack.push(before);
-        redoStack.clear();
+        history.save(before);
     }
     
      /**
@@ -271,97 +253,22 @@ public class ImageCanvas extends Canvas {
         modified = true;
     }
     
-        /**
-     * stretches the seclection box.
-     *
-     * @param mouseX x of the mouse
-     * @param mouseY y of the mouse
-     */
-    private void updateSelection(double mouseX, double mouseY) {
-        double x2 = Math.max(0, Math.min(mouseX, getWidth()));
-        double y2 = Math.max(0, Math.min(mouseY, getHeight()));
-        selectionBox.setX(Math.min(startX, x2));
-        selectionBox.setY(Math.min(startY, y2));
-        selectionBox.setWidth(Math.abs(x2 - startX));
-        selectionBox.setHeight(Math.abs(y2 - startY));
-        selectionBox.setVisible(true);
-    }
-
     /**
      * gets the dashed showed area.
      *
      * @return the selection box
      */
     public Rectangle getSelectionBox() {
-        return selectionBox;
+        return selection.getSelectionBox();
     }
-    
+
      /**
      * selection box copy.
      */
     public void copySelection() {
-        int x = (int) selectionBox.getX();
-        int y = (int) selectionBox.getY();
-        int w = (int) selectionBox.getWidth();
-        int h = (int) selectionBox.getHeight();
-        if (!selectionBox.isVisible() || w < 1 || h < 1) {
-            return;
-        }
-        WritableImage whole = snapshot(null, null);
-        settings.setClipboard(new WritableImage(whole.getPixelReader(), x, y, w, h));
-    }
-    
-     /**
-     * shows the copies piece on top of the picture.
-     */
-    private void drawPaste(double x, double y) {
-        Image piece = settings.getClipboard();
-        if (piece == null) {
-            return;
-        }
-        gc.drawImage(beforeDrag, 0, 0);
-        gc.drawImage(piece, x - piece.getWidth() / 2, y - piece.getHeight() / 2);
-    }
-    
-     /**
-     * lifts the selected piece off of the canvas.
-     */
-    private void startMove(double mouseX, double mouseY) {
-        int x = (int) selectionBox.getX();
-        int y = (int) selectionBox.getY();
-        int w = (int) selectionBox.getWidth();
-        int h = (int) selectionBox.getHeight();
-        movingPiece = null;
-        if (!selectionBox.isVisible() || w < 1 || h < 1) {
-            return;
-        }
-        movingPiece = new WritableImage(beforeDrag.getPixelReader(), x, y, w, h);
-        gc.setFill(Color.WHITE);
-        gc.fillRect(x, y, w, h);
-        moveBase = snapshot(null, null);
-        gc.drawImage(movingPiece, x, y);
-        moveOffsetX = mouseX - x;
-        moveOffsetY = mouseY - y;
+        selection.copySelection();
     }
 
-     /**
-     * shows the lifted image piece on top of the picture and moves the
-     * selection box with it.
-     */
-    private void dragMove(double mouseX, double mouseY) {
-        if (movingPiece == null) {
-            return;
-        }
-        double x = Math.round(mouseX - moveOffsetX);
-        double y = Math.round(mouseY - moveOffsetY);
-        x = Math.max(0, Math.min(x, getWidth() - movingPiece.getWidth()));
-        y = Math.max(0, Math.min(y, getHeight() - movingPiece.getHeight()));
-        gc.drawImage(moveBase, 0, 0);
-        gc.drawImage(movingPiece, x, y);
-        selectionBox.setX(x);
-        selectionBox.setY(y);
-    }
-    
     //called by PaintApp when a new image is loaded
     public void setImage(Image newImg) {
         this.img = newImg;
@@ -398,7 +305,7 @@ public class ImageCanvas extends Canvas {
         return snapshot(null,null);
     }
     public boolean hasImage() {
-     return img != null;
+     return getWidth() > 0 && getHeight() > 0;
     }
     //smart save
     private boolean modified;

@@ -12,6 +12,8 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
+    private PaintApp app;
+
  /**
  * Called by JavaFX once the runtime is ready. Builds the application
  * inside the window it is given.
@@ -21,9 +23,18 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         //hand the primary window tso the differo PaintApp to fill in
-        new PaintApp(stage);
+        app = new PaintApp(stage);
     }
-    
+
+    /**
+     * Called by JavaFX when the program closes, stops the web server so
+     * its thread does not keep the program running.
+     */
+    @Override
+    public void stop() {
+        app.shutdown();
+    }
+
     /**
      * Launches the JavaFX application.
      *

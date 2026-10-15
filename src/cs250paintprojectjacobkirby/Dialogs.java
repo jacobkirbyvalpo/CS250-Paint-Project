@@ -4,7 +4,9 @@
  */
 package cs250paintprojectjacobkirby;
 
+import java.util.Optional;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
  
 /**
  * Popup dialogs used across the entire app.
@@ -30,4 +32,17 @@ public class Dialogs {
     alert.setHeaderText(null);
     alert.showAndWait();
 }
+
+    /**
+     * Shows a warning with OK and Cancel and waits for the user to pick one.
+     *
+     * @param message the text to display
+     * @return true if the user clicked OK
+     */
+    public static boolean confirm(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING, message, ButtonType.OK, ButtonType.CANCEL);
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
 }

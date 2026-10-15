@@ -32,6 +32,7 @@ public class ShapeDrawer {
             case RIGHT_TRIANGLE -> drawRightTriangle(gc, x1, y1, x2, y2);
             case POLYGON -> drawPolygon(gc, x1, y1, x2, y2, sides);
             case DIAMOND -> drawDiamond(gc, x1, y1, x2, y2);
+            case STAR -> drawStar(gc, x1, y1, x2, y2, sides);
             default -> { }
         }
     }
@@ -121,5 +122,39 @@ public class ShapeDrawer {
             ys[i] = y1 + radius * Math.sin(angle);
         }
         gc.strokePolygon(xs, ys, sides);
+    }
+    
+    
+    /**
+     * works out the math for the start.
+     *
+     */
+    public static double[][] starPoints(double x1, double y1, double x2, double y2, int points) {
+        if (points < 4) {
+            points = 4;
+        }
+        double outer = Math.hypot(x2 - x1, y2 - y1);
+        double inner = outer * 0.5;
+        double startAngle = Math.atan2(y2 - y1, x2 - x1);
+        double[] xs = new double[points * 2];
+        double[] ys = new double[points * 2];
+        for (int i = 0; i < points * 2; i++) {
+            double angle = startAngle + i * Math.PI / points;
+            double radius = outer;
+            if (i % 2 == 1) {
+                radius = inner;
+            }
+            xs[i] = x1 + radius * Math.cos(angle);
+            ys[i] = y1 + radius * Math.sin(angle);
+        }
+        return new double[][] { xs, ys };
+    }
+
+    /**
+     * draws a star with the given number of points.
+     */
+    public static void drawStar(GraphicsContext gc, double x1, double y1, double x2, double y2, int points) {
+        double[][] p = starPoints(x1, y1, x2, y2, points);
+        gc.strokePolygon(p[0], p[1], p[0].length);
     }
 }

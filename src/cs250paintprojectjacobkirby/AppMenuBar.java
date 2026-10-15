@@ -1,5 +1,6 @@
 package cs250paintprojectjacobkirby;
 
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -24,8 +25,9 @@ public class AppMenuBar extends MenuBar {
  * @param fileActions this handles open, save, save as and close and ecit checks
  * @param onResize  if canvas resize is needed for image.
  * @param editActions this handles clearing the canvas
+ * @param statusBar the bottom bar, its autosave countdown can be hidden
  */
-    public AppMenuBar(FileActions fileActions, EditActions editActions, Runnable onResize) {
+    public AppMenuBar(FileActions fileActions, EditActions editActions, Runnable onResize, StatusBar statusBar) {
         this.fileActions = fileActions;
         this.onResize = onResize;
         this.editActions = editActions;
@@ -84,7 +86,14 @@ public class AppMenuBar extends MenuBar {
         Menu editMenu = new Menu("Edit");
         editMenu.getItems().addAll(undoItem, redoItem, copyItem, new SeparatorMenuItem(), clearItem);
         getMenus().add(editMenu);
-        
+
+        CheckMenuItem showTimerItem = new CheckMenuItem("Show Autosave Timer");
+        showTimerItem.setSelected(true);
+        showTimerItem.setOnAction(e -> statusBar.setTimerVisible(showTimerItem.isSelected()));
+        Menu optionsMenu = new Menu("Options");
+        optionsMenu.getItems().add(showTimerItem);
+        getMenus().add(optionsMenu);
+
         //menu and about additional code
         Menu helpMenu = new Menu("Help");
         helpMenu.getItems().addAll(helpItem, aboutItem);

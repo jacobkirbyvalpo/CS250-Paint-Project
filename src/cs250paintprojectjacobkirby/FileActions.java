@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 
 import javafx.stage.Stage;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
@@ -31,6 +30,8 @@ public class FileActions {
 
     private ToolSettings settings;
 
+    private AutoSaveTimer autoSaveTimer;
+
     /**
      * Creates the file handler.
      *
@@ -42,6 +43,15 @@ public class FileActions {
         this.stage = stage;
         this.tabPane = tabPane;
         this.settings = settings;
+    }
+
+    /**
+     * Gives the file handler the autosave timer so a save can reset it.
+     *
+     * @param autoSaveTimer the timer to reset after each save
+     */
+    public void setAutoSaveTimer(AutoSaveTimer autoSaveTimer) {
+        this.autoSaveTimer = autoSaveTimer;
     }
 
     /**
@@ -149,6 +159,16 @@ public class FileActions {
 
         File file = chooser.showSaveDialog(stage);
         if (file != null) {
+            String oldFormat = null;
+            if (tab.getFile() != null) {
+                oldFormat = ImageFormats.getExtension(tab.getFile());
+            }
+            String newFormat = ImageFormats.getExtension(file);
+            if (ImageFormats.needsWarning(oldFormat, newFormat)
+                    && !Dialogs.confirm("Saving as " + newFormat.toUpperCase()
+                    + " uses lossy compression, so some image detail will be lost. Continue?")) {
+                return;
+            }
             writeTo(file);
             tab.setFile(file);
         }
@@ -187,30 +207,10 @@ public class FileActions {
         }
         try {
             //BufferedImage that ImageIO can write.
-            String name = file.getName();
-             int dot = name.lastIndexOf(".");
-             String format;
-             if (dot != -1){
-              format =name.substring(dot+1).toLowerCase();
-             }
-             else {
-              format = "png";
-             }
-
-             //no format to read file image error
-             //https://bugs.openjdk.org/browse/JDK-8211748
+            String format = ImageFormats.getExtension(file);
 
                      BufferedImage bimg = SwingFXUtils.fromFXImage(canvas.getImage(), null);
-//this is all to avoid the alpha channel PNG to JPG or other format bug, documented above because it was evil.
-             if (format.equals("jpg") || format.equals("jpeg") || format.equals("bmp")){
-             BufferedImage rgb = new BufferedImage(bimg.getWidth(), bimg.getHeight(),
-             BufferedImage.TYPE_INT_RGB);
-
-             Graphics2D g = rgb.createGraphics();
-             g.drawImage(bimg, 0, 0, null);
-             g.dispose();
-             bimg = rgb;
-        }
+            bimg = ImageFormats.toSaveable(bimg, format);
             boolean ok = ImageIO.write(bimg, format, file);
 
             if (!ok) {
@@ -218,6 +218,9 @@ public class FileActions {
             }
             else {
                 canvas.markSaved();
+                if (autoSaveTimer != null) {
+                    autoSaveTimer.reset();
+                }
             }
         } catch (IOException e) {
             Dialogs.showError("Could not write to the file.");

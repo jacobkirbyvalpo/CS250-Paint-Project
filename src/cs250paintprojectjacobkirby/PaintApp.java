@@ -24,6 +24,8 @@ public class PaintApp {
     private TabPane tabPane;
 
     private FileActions fileActions;
+
+    private ImageWebServer webServer;
     /**
      * Creates the interface and shows it.
      *
@@ -39,13 +41,20 @@ public class PaintApp {
                 fileActions = new FileActions(stage, tabPane, settings);
         fileActions.newFile();
         EditActions editActions = new EditActions(fileActions);
-        AppMenuBar menuBar = new AppMenuBar(fileActions, editActions, () -> resizeCanvas());
+        StatusBar statusBar = new StatusBar();
+        AutoSaveTimer autoSaveTimer = new AutoSaveTimer(tabPane, statusBar.getTimerLabel());
+        fileActions.setAutoSaveTimer(autoSaveTimer);
+        autoSaveTimer.start();
+        webServer = new ImageWebServer(tabPane);
+        webServer.start();
+        AppMenuBar menuBar = new AppMenuBar(fileActions, editActions, () -> resizeCanvas(), statusBar);
 
         PaintToolBar toolBar = new PaintToolBar(settings);
 
         BorderPane root = new BorderPane();
         root.setTop(new VBox(menuBar, toolBar));
         root.setCenter(tabPane);
+        root.setBottom(statusBar);
 
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
@@ -56,6 +65,13 @@ public class PaintApp {
             }
         });
 
+    }
+
+    /**
+     * Stops the web server, called by Main when the program closes.
+     */
+    public void shutdown() {
+        webServer.stop();
     }
        //does what it says, opens tje file and prevents other files
     /**

@@ -87,6 +87,10 @@ public class PaintToolBar extends ToolBar {
         ToggleButton moveButton = new ToggleButton("Move");
         moveButton.setToggleGroup(toolGroup);
         moveButton.setOnAction(e -> settings.setTool(Tool.MOVE));
+        
+        ToggleButton starButton = new ToggleButton("Star");
+        starButton.setToggleGroup(toolGroup);
+        starButton.setOnAction(e -> settings.setTool(Tool.STAR));
 
         Label sidesLabel = new Label("Sides");
         Spinner<Integer> sidesSpinner = new Spinner<>(3, 100, 5);
@@ -125,6 +129,6 @@ public class PaintToolBar extends ToolBar {
 
         getItems().addAll(colorPicker, colorLabel, grabberButton, widthSlider, widthLabel, textButton, selectButton, pasteButton, moveButton,
         pencilButton, lineButton, rectButton, squareButton, ellipseButton, circleButton, triangleButton,
-        rightTriangleButton, polygonButton, sidesLabel, sidesSpinner, diamondButton, dashedBox);
+        rightTriangleButton, polygonButton, starButton, sidesLabel, sidesSpinner, diamondButton, dashedBox);
     }
 }

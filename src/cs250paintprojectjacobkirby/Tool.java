@@ -20,5 +20,6 @@ public enum Tool {
     SELECT,
     PASTE,
     MOVE,
-    GRABBER
+    GRABBER,
+    STAR
 }
