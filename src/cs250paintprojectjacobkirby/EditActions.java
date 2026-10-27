@@ -31,8 +31,18 @@ public class EditActions {
             return;
         }
         tab.getCanvas().copySelection();
+        ActivityLogger.log("Copied selection");
     }
-
+    /**
+     * pastes the copied area into the current canvas.
+     */
+    public void paste() {
+        DocumentTab tab = fileActions.currentTab();
+            if (tab == null) {
+            return;
+            }
+        tab.getCanvas().pasteClipboard();
+    }
     /**
      * Asks the user to confirm, then paints the current canvas white.
      */
@@ -48,6 +58,7 @@ public class EditActions {
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
             tab.getCanvas().clear();
+            ActivityLogger.log("Cleared canvas");
         }
     }
     
@@ -60,6 +71,7 @@ public class EditActions {
             return;
         }
         tab.getCanvas().undo();
+        ActivityLogger.log("Undo");
     }
 
     /**
@@ -71,6 +83,7 @@ public class EditActions {
             return;
         }
         tab.getCanvas().redo();
+        ActivityLogger.log("Redo");
     }
     
 }

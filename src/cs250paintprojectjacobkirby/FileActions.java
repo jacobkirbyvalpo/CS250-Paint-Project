@@ -94,6 +94,7 @@ public class FileActions {
             });
             tabPane.getTabs().add(tab);
             tabPane.getSelectionModel().select(tab);
+            ActivityLogger.log("Opened " + file.getName() + " in tab " + tabPane.getTabs().size());
         }
     }
     
@@ -104,6 +105,7 @@ public class FileActions {
         DocumentTab tab = new DocumentTab(settings, null, null);
         tab.getCanvas().makeBlank(800, 600);
         addTab(tab);
+        ActivityLogger.log("New blank image in tab " + tabPane.getTabs().size());
     }
 
     /**
@@ -188,6 +190,7 @@ public class FileActions {
          if(!confirmDiscard()){
          return;
         }
+        ActivityLogger.log("Closed tab");
         tabPane.getTabs().remove(tab);
     }
 
@@ -218,6 +221,7 @@ public class FileActions {
             }
             else {
                 canvas.markSaved();
+                ActivityLogger.log("Saved " + file.getName());
                 if (autoSaveTimer != null) {
                     autoSaveTimer.reset();
                 }

@@ -1,4 +1,36 @@
-﻿Jacob's Paint Version 0.6.0 - 10/14/2026
+﻿Jacob's Paint Version 0.7.0 - 10/26/2026
+
+Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
+Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.7.0
+
+New Features:
+* Rotate 90/180/270 and flip horizontal/vertical, on a selection or the whole canvas
+* Icons on all tool buttons
+* Tool tips on hover
+* New shortcuts: Ctrl+V paste, Ctrl+R rotate, Ctrl+Delete clear, F1 help
+* OS notifications on autosave, can be turned on or off in Options
+* Threaded logging of user actions to JacobsPaintLog.txt in the home folder
+
+Known Issues:
+* Grabber only works while dragging and errors off the canvas edge
+* Cancelling Save As from the unsaved changes dialog still closes the tab
+* Clicking a selected tool button unselects it but the tool stays active
+* No text preview
+* Pencil looks solid when Dashed is on
+* Toolbar can be wider than a small window
+* Color names are approximate
+* Transparency is not kept
+* Autosave interval and web server port are fixed in the code
+* Rotating a selection near the edge cuts off part of it
+* Moving, rotating or flipping a selection leaves white behind
+* Notifications only work on Linux with notify-send
+* Some actions are not logged (tab X button, color picker)
+
+Expected next sprint:
+* Fixing Up Issues I think
+
+
+Jacob's Paint Version 0.6.0 - 10/14/2026
 
 Repository: https://github.com/jacobkirbyvalpo/CS250-Paint-Project
 Release tag: https://github.com/jacobkirbyvalpo/CS250-Paint-Project/releases/tag/v0.6.0

@@ -117,14 +117,15 @@ public class ImageCanvas extends Canvas {
             }
             
              if (settings.getTool() == Tool.SELECT) {
+                ActivityLogger.log("Selected an area");
                 return;
             }
-             
             if (settings.getTool() == Tool.PASTE) {
                 if (settings.getClipboard() != null) {
                     saveForUndo(beforeDrag);
                     selection.drawPaste(beforeDrag, e.getX(), e.getY());
                     modified = true;
+                    ActivityLogger.log("Pasted");
                 }
                 return;
             }
@@ -135,6 +136,7 @@ public class ImageCanvas extends Canvas {
                     selection.dragMove(e.getX(), e.getY());
                     modified = true;
                     selection.stopMove();
+                    ActivityLogger.log("Moved selection");
                 }
                 return;
             }
@@ -150,6 +152,13 @@ public class ImageCanvas extends Canvas {
                 ShapeDrawer.draw(gc, settings.getTool(), startX, startY, e.getX(), e.getY(), settings.getSides());
                 //lets smart save know, image is modified
                 modified = true;
+                ActivityLogger.log("Drew " + settings.getTool());
+            }
+            if (settings.getTool() == Tool.PENCIL) {
+                ActivityLogger.log("Drew with PENCIL");
+            }
+            if (settings.getTool() == Tool.GRABBER) {
+                ActivityLogger.log("Picked color " + ColorNames.toHex(settings.getColor()));
             }
         });
     }
@@ -251,6 +260,7 @@ public class ImageCanvas extends Canvas {
         gc.setFont(new Font(10 + settings.getWidth() * 2));
         gc.fillText(result.get(), x, y);
         modified = true;
+        ActivityLogger.log("Added text");
     }
     
     /**
@@ -268,7 +278,31 @@ public class ImageCanvas extends Canvas {
     public void copySelection() {
         selection.copySelection();
     }
+    
+    /**
+     * Pastes the copied piece in the top left corner and selects so the
+     * move tool can then drag it.
+     */
+    public void pasteClipboard() {
+        WritableImage before = snapshot(null, null);
+        if (selection.pasteInCorner()) {
+            saveForUndo(before);
+            modified = true;
+            ActivityLogger.log("Pasted");
+        }
+    }
 
+    
+     /**
+     * Saves the picture from before a change for undo and marks
+     * as change, used when another class then draws on the canvas.
+     *
+     */
+    public void markChanged(WritableImage before) {
+        saveForUndo(before);
+        modified = true;
+    }
+    
     //called by PaintApp when a new image is loaded
     public void setImage(Image newImg) {
         this.img = newImg;

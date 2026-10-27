@@ -29,6 +29,7 @@ public class ToolSettings {
 
     public void setTool(Tool newTool){
         currentTool = newTool;
+        ActivityLogger.log(newTool + " tool selected");
     }
 
     public Color getColor() {

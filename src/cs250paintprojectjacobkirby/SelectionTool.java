@@ -153,4 +153,23 @@ public class SelectionTool {
     public void stopMove() {
         movingPiece = null;
     }
+    
+    
+    /**
+     * Dras the copied piece in the top left corner and then selects it
+     * returns true if there is something to paste.
+     */
+    public boolean pasteInCorner() {
+        Image piece = settings.getClipboard();
+        if (piece == null) {
+            return false;
+        }
+        gc.drawImage(piece, 0, 0);
+        selectionBox.setX(0);
+        selectionBox.setY(0);
+        selectionBox.setWidth(Math.min(piece.getWidth(), canvas.getWidth()));
+        selectionBox.setHeight(Math.min(piece.getHeight(), canvas.getHeight()));
+        selectionBox.setVisible(true);
+        return true;
+    }
 }

@@ -38,6 +38,8 @@ public class PaintApp {
 
         ToolSettings settings = new ToolSettings();
         tabPane = new TabPane();
+        ActivityLogger.start(tabPane);
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> ActivityLogger.log("Switched tab"));
                 fileActions = new FileActions(stage, tabPane, settings);
         fileActions.newFile();
         EditActions editActions = new EditActions(fileActions);
@@ -58,6 +60,7 @@ public class PaintApp {
 
         stage.setScene(new Scene(root, 800, 600));
         stage.show();
+        ActivityLogger.log("Program started");
 
        stage.setOnCloseRequest(e -> {
             if (!fileActions.confirmDiscardAll()) {
@@ -71,7 +74,9 @@ public class PaintApp {
      * Stops the web server, called by Main when the program closes.
      */
     public void shutdown() {
+        ActivityLogger.log("Program closed");
         webServer.stop();
+        ActivityLogger.stop();
     }
        //does what it says, opens tje file and prevents other files
     /**
@@ -108,6 +113,7 @@ public class PaintApp {
             return;
         }
         tab.getCanvas().resizeCanvas(w, h);
+        ActivityLogger.log("Resized canvas to " + w + "x" + h);
     } catch (NumberFormatException e) {
         Dialogs.showError("Please enter whole numbers only");
     }

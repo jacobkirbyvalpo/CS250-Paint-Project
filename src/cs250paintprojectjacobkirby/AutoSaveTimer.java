@@ -22,7 +22,7 @@ import javax.imageio.ImageIO;
 
 public class AutoSaveTimer {
 
-    private static final int INTERVAL_SECONDS = 10;
+    private static final int INTERVAL_SECONDS = 20;
     private int secondsLeft = INTERVAL_SECONDS;
     private Timeline timeline;
     private TabPane tabPane;
@@ -75,6 +75,7 @@ public class AutoSaveTimer {
         File folder = new File(System.getProperty("user.home"), "JacobsPaintAutosave");
         folder.mkdirs();
         int number = 0;
+        int saved = 0;
         for (Tab t : tabPane.getTabs()) {
             DocumentTab tab = (DocumentTab) t;
             number++;
@@ -85,9 +86,14 @@ public class AutoSaveTimer {
             BufferedImage bimg = SwingFXUtils.fromFXImage(tab.getCanvas().getImage(), null);
             try {
                 ImageIO.write(bimg, "png", out);
+                ActivityLogger.log("Autosaved " + out.getName());
+                saved++;
             } catch (IOException e) {
                 System.err.println("Autosave failed for " + out);
             }
+        }
+        if (saved > 0) {
+            Notifier.show("Jacob's Paint", "Autosaved " + saved + " tab(s)");
         }
     }
 

@@ -1,7 +1,3 @@
-/**
- * Popup dialogs used across the entire app
- * @author Norboc
- */
 package cs250paintprojectjacobkirby;
 
 import java.util.Optional;

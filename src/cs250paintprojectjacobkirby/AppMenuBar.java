@@ -46,6 +46,7 @@ public class AppMenuBar extends MenuBar {
         MenuItem undoItem = new MenuItem("Undo");
         MenuItem redoItem = new MenuItem("Redo");
         MenuItem copyItem = new MenuItem("Copy");
+        MenuItem pasteItem = new MenuItem("Paste");
         // these set the actions
          openItem.setOnAction(e -> fileActions.openFile());
          saveItem.setOnAction(e -> fileActions.save());
@@ -59,6 +60,7 @@ public class AppMenuBar extends MenuBar {
          undoItem.setOnAction(e -> editActions.undo());
          redoItem.setOnAction(e -> editActions.redo());
          copyItem.setOnAction(e -> editActions.copy());
+         pasteItem.setOnAction(e -> editActions.paste());
          //shortcuts
          saveItem.setAccelerator(KeyCombination.keyCombination("Shortcut+S"));
          openItem.setAccelerator(KeyCombination.keyCombination("Shortcut+O"));
@@ -66,10 +68,12 @@ public class AppMenuBar extends MenuBar {
          closeItem.setAccelerator(KeyCombination.keyCombination("Shortcut+W"));
          exitItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Q"));
          newItem.setAccelerator(KeyCombination.keyCombination("Shortcut+N"));
-         clearItem.setOnAction(e -> editActions.clearCanvas());
+         clearItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Delete"));
          undoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Z"));
          redoItem.setAccelerator(KeyCombination.keyCombination("Shortcut+Y"));
          copyItem.setAccelerator(KeyCombination.keyCombination("Shortcut+C"));
+         pasteItem.setAccelerator(KeyCombination.keyCombination("Shortcut+V"));
+         helpItem.setAccelerator(KeyCombination.keyCombination("F1"));
          //smart save upgrade
         exitItem.setOnAction(e -> {
         if (fileActions.confirmDiscardAll()) {
@@ -84,19 +88,41 @@ public class AppMenuBar extends MenuBar {
         getMenus().add(fileMenu);
         //clear item menu
         Menu editMenu = new Menu("Edit");
-        editMenu.getItems().addAll(undoItem, redoItem, copyItem, new SeparatorMenuItem(), clearItem);
+        editMenu.getItems().addAll(undoItem, redoItem, copyItem, pasteItem, new SeparatorMenuItem(), clearItem);
         getMenus().add(editMenu);
 
         CheckMenuItem showTimerItem = new CheckMenuItem("Show Autosave Timer");
         showTimerItem.setSelected(true);
         showTimerItem.setOnAction(e -> statusBar.setTimerVisible(showTimerItem.isSelected()));
+        CheckMenuItem notifyItem = new CheckMenuItem("Autosave Notifications");
+        notifyItem.setSelected(true);
+        notifyItem.setOnAction(e -> {
+            Notifier.setEnabled(notifyItem.isSelected());
+            ActivityLogger.log("Autosave notifications " + (notifyItem.isSelected() ? "on" : "off"));
+        });
         Menu optionsMenu = new Menu("Options");
-        optionsMenu.getItems().add(showTimerItem);
+        optionsMenu.getItems().addAll(showTimerItem, notifyItem);
         getMenus().add(optionsMenu);
 
         //menu and about additional code
         Menu helpMenu = new Menu("Help");
         helpMenu.getItems().addAll(helpItem, aboutItem);
         getMenus().add(helpMenu);
+        //image transformation stuff.
+        TransformActions transformActions = new TransformActions(fileActions);
+        MenuItem rotate90Item = new MenuItem("Rotate 90");
+        MenuItem rotate180Item = new MenuItem("Rotate 180");
+        MenuItem rotate270Item = new MenuItem("Rotate 270");
+        MenuItem flipHItem = new MenuItem("Flip Horizontal");
+        MenuItem flipVItem = new MenuItem("Flip Vertical");
+        rotate90Item.setOnAction(e -> transformActions.apply("Rotate 90"));
+        rotate180Item.setOnAction(e -> transformActions.apply("Rotate 180"));
+        rotate270Item.setOnAction(e -> transformActions.apply("Rotate 270"));
+        flipHItem.setOnAction(e -> transformActions.apply("Flip Horizontal"));
+        flipVItem.setOnAction(e -> transformActions.apply("Flip Vertical"));
+        rotate90Item.setAccelerator(KeyCombination.keyCombination("Shortcut+R"));
+        Menu imageMenu = new Menu("Image");
+        imageMenu.getItems().addAll(rotate90Item, rotate180Item, rotate270Item, new SeparatorMenuItem(), flipHItem, flipVItem);
+        getMenus().add(imageMenu);
     }
 }
