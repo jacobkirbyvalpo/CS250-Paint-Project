@@ -1,0 +1,65 @@
+Jacob's Paint 1.0.0 - Code Quality and Organization Notes
+Jacob Kirby, CS 250, 11/11/2026
+
+HOW THE CODE IS ORGANIZED
+All source is in src/cs250paintprojectjacobkirby. The code is split into many small classes, each with one job, instead of a few large files.
+
+Startup and window
+* Main- starts JavaFX and calls PaintApp.shutdown() when the program closes
+* PaintApp- builds the window (menu bar, toolbar, tabs, status bar) and connects them all together.
+
+User interface
+* AppMenuBar- File, Edit, Options, Help and Image menus and their keyboard/keybind shortcuts
+* PaintToolBar- color picker, color label, width slider, Sides box, Dashed box, tool buttons with their own icons and their own tool tips
+* StatusBar- the autosave countdown at the bottom of the window
+* DocumentTab- one tab per open image, holds its own canvas, file and the Share on Web option via localhost in a browser.
+* Icons- loads the toolbar icons from src/cs250paintprojectjacobkirby/icons
+* Dialogs- error, info and OK/Cancel dialogs in one place
+
+Drawing
+* ImageCanvas- the drawing surface and the mouse handlers
+* ToolSettings- shared state (current tool, color, width, dashed, sides, clipboard)
+* Tool- enum of every tool
+* ShapeDrawer- static methods that draw each shape
+* SelectionTool- select, copy, paste and move
+* UndoHistory- the undo and redo stacks
+* ColorNames- hex, RGB and name text for the color label
+
+Actions (what the menus call)
+* FileActions- new, open, save, save as, close, smart save checks
+* EditActions- undo, redo, copy, paste, clear
+* TransformActions- rotate 90/180/270 and flip, on a selection or the canvas as a whole.
+* ImageFormats- file extension and format helpers, no JavaFX needed here.
+
+Background work and threads
+* AutoSaveTimer- Saves PNG backups of changed tabs to ~/JacobsPaintAutosave
+* Notifier- desktop notifications through notify-send, each on its own thread (linux only)
+* ActivityLogger- adds events to a queue, a separate writer thread appends them to ~/JacobsPaintLog.txt
+* ImageWebServer- small web server on localhost:8080.
+
+STEPS TAKEN FOR CODE QUALITY
+* Splitting the large classes up as the project grew
+* Static helper classes for code that have no state
+* JavaDoc comments on classes and most methods
+* JUnit 4 tests.
+* Threads never touch the window directly.
+* Git: build/, dist/, nbproject/private/ and .class files are in .gitignore.
+* UML diagrams in docs
+
+
+
+SETUP / IDE SETTINGS I HAD TO CHANGE
+* JDK 26, Apache NetBeans 30, project type Java with Ant
+* JavaFX 26.0.2 SDK from Gluon, added to the Modulepath (Project Properties > Libraries)
+* Compiler option: --add-modules javafx.controls,javafx.graphics,javafx.base,javafx.swing
+* VM options: --module-path <javafx-sdk>/lib --add-modules javafx.controls,javafx.swing
+* Javadoc option (Build > Documenting): --module-path <javafx-sdk>/lib --add-modules javafx.controls,javafx.swing
+* JUnit 4 and Hamcrest in the test libraries
+* Source and binary format set to 26 (Project Properties > Sources), main class cs250paintprojectjacobkirby.Main
+* Javadoc @author box checked so the @author tags show in the JavaDoc
+* These settings are saved in nbproject/project.properties. The JavaFX path there is /home/Norboc/.local/share/javafx-sdk-26.0.2, change it to wherever the SDK is on your machine.
+
+RUNNING THE JAR
+The jar needs JavaFX given to it on the command line:
+java --module-path <javafx-sdk>/lib --add-modules javafx.controls,javafx.swing -jar CS250PaintProjectJacobKirby.jar
+Autosave notifications need notify-send (libnotify), so they only work on Linux.
